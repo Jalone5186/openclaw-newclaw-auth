@@ -24,7 +24,7 @@ openclaw plugins install openclaw-newclaw-auth
 安装后运行认证向导：
 
 ```bash
-openclaw auth newclaw
+openclaw models auth login --provider newclaw
 ```
 
 向导流程：

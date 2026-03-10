@@ -24,7 +24,7 @@ openclaw plugins install openclaw-newclaw-auth
 Run the auth wizard after installing:
 
 ```bash
-openclaw auth newclaw
+openclaw models auth login --provider newclaw
 ```
 
 The wizard asks for your universal `NEWCLAW_API_KEY` first (required). Then you can optionally add provider-specific keys if you want to route requests to a specific underlying model provider (Claude, Gemini, GPT, etc.). If you skip provider keys, NewClaw routes automatically.

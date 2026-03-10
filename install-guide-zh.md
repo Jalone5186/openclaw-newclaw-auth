@@ -250,7 +250,7 @@ openclaw plugins install openclaw-newclaw-auth
 在终端运行：
 
 ```bash
-openclaw auth newclaw
+openclaw models auth login --provider newclaw
 ```
 
 向导会一步步提示你输入：
@@ -352,7 +352,7 @@ $npmPath = (npm prefix -g); [Environment]::SetEnvironmentVariable("PATH", "$npmP
 SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest
 ```
 
-### Q: 运行 `openclaw auth newclaw` 时提示找不到 provider？
+### Q: 运行 `openclaw models auth login --provider newclaw` 时提示找不到 provider？
 
 确认插件已安装：
 
@@ -384,7 +384,7 @@ openclaw plugins install openclaw-newclaw-auth
 重新运行认证向导即可，新配置会覆盖旧的：
 
 ```bash
-openclaw auth newclaw
+openclaw models auth login --provider newclaw
 ```
 
 ### Q: 想卸载插件？
@@ -402,11 +402,11 @@ openclaw plugins uninstall openclaw-newclaw-auth
 | 安装 OpenClaw（全平台） | `npm install -g openclaw@latest` |
 | 运行新手引导 | `openclaw onboard --install-daemon` |
 | 安装 NewClaw 插件 | `openclaw plugins install openclaw-newclaw-auth` |
-| 配置 API Key | `openclaw auth newclaw` |
+| 配置 API Key | `openclaw models auth login --provider newclaw` |
 | 检查安装状态 | `openclaw doctor` |
 | 查看已装插件 | `openclaw plugins list` |
 | 查看可用模型 | `openclaw models` |
 | 打开管理面板 | `openclaw dashboard` |
-| 重新配置 Key | `openclaw auth newclaw` |
+| 重新配置 Key | `openclaw models auth login --provider newclaw` |
 | 卸载插件 | `openclaw plugins uninstall openclaw-newclaw-auth` |
 | 更新 OpenClaw | `npm install -g openclaw@latest` |
