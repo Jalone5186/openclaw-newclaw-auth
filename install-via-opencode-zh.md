@@ -21,7 +21,7 @@
 
 重要提醒：
 - 在 Windows 上不要使用 export 命令（那是 Linux 语法），用 set 或 PowerShell 的 $env: 语法
-- npm install 命令必须加 --ignore-scripts 参数，避免 node-llama-cpp 编译失败
+- 安装 OpenClaw 时 node-llama-cpp 相关的红色报错是正常的，不影响安装，不要尝试修复
 - 安装 Git 后必须重启终端再继续，否则 git 命令不可用
 
 ## 步骤 1：检查 Node.js 版本
@@ -51,12 +51,13 @@
 先运行 `openclaw --version` 检查是否已安装。
 
 - 如果已安装，跳到步骤 4
-- 如果未安装，运行：`npm install -g openclaw@latest --ignore-scripts`
-  - 必须加 --ignore-scripts，因为 node-llama-cpp 的 postinstall 脚本需要 cmake 编译工具链，大多数机器上没有安装，会导致安装失败。跳过不影响 OpenClaw 核心功能
-- 如果遇到 sharp 相关错误，改用：`SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest --ignore-scripts`
+- 如果未安装，运行：`npm install -g openclaw@latest`
+  - 安装过程中可能出现 node-llama-cpp 相关的红色报错（如 cmake 找不到），这是正常的，不影响安装。它是可选的本地 AI 组件，编译失败只产生警告不会中断安装
+- 如果遇到 sharp 相关错误，改用：`SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest`
 - 如果安装后 `openclaw` 命令找不到：
-  - macOS/Linux：运行 `export PATH="$(npm prefix -g)/bin:$PATH"`
-  - Windows：重启终端再试
+  - macOS（zsh）：运行 `echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc`
+  - Linux（bash）：运行 `echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc`
+  - Windows：重启终端再试。如果仍然找不到，以管理员身份运行 PowerShell 执行：`$npmPath = (npm prefix -g); [Environment]::SetEnvironmentVariable("PATH", "$npmPath;" + [Environment]::GetEnvironmentVariable("PATH", "Machine"), "Machine")`，然后重启终端
 - 安装完成后运行：`openclaw onboard --install-daemon`
 - 确认安装成功：运行 `openclaw --version`，应该输出版本号
 
@@ -117,7 +118,7 @@
 
 - **`export` 命令报错**：这是因为 OpenCode 在 Windows 上可能用 cmd.exe 执行命令，`export` 是 Linux 语法。如果影响安装，请使用 [手动安装教程](./install-guide-zh.md)
 - **安装 Git 后仍然找不到 git**：需要关闭并重新打开终端窗口，或手动添加 `C:\Program Files\Git\cmd` 到 PATH
-- **`node-llama-cpp` 编译失败**：这就是为什么上面的命令加了 `--ignore-scripts`，已经预防了这个问题
+- **`node-llama-cpp` 编译失败**：这是正常的，不影响安装和使用。它是可选的本地 AI 嵌入组件，编译失败只产生警告
 
 ## 如果 OpenCode 执行失败怎么办
 

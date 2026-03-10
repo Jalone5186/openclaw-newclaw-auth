@@ -144,10 +144,10 @@ git --version
 打开终端，依次运行以下两条命令：
 
 ```bash
-npm install -g openclaw@latest --ignore-scripts
+npm install -g openclaw@latest
 ```
 
-> 💡 `--ignore-scripts` 用于跳过 `node-llama-cpp` 等依赖的编译脚本（需要 cmake 工具链，大多数用户没有安装）。跳过不影响 OpenClaw 核心功能。
+> ⚠️ 安装过程中可能出现 `node-llama-cpp` 相关的红色报错（如 `cmake` 找不到、编译失败），**这是正常的，不影响安装**。`node-llama-cpp` 是可选的本地 AI 嵌入组件，编译失败只会产生警告，不会中断 OpenClaw 的安装。AI 聊天、模型调用、插件等核心功能完全不受影响。
 
 安装完成后，运行新手引导和后台守护进程：
 
@@ -159,25 +159,33 @@ openclaw onboard --install-daemon
 
 > ⚠️ 如果安装过程中提示 `sharp` 相关错误，改用这条命令安装：
 > ```bash
-> SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest --ignore-scripts
+> SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest
 > ```
 > 然后再运行 `openclaw onboard --install-daemon`。
 
-> ⚠️ 如果安装完成后运行 `openclaw` 提示「命令未找到」，执行：
+> ⚠️ 如果安装完成后运行 `openclaw` 提示「命令未找到」，执行以下命令修复：
+>
+> **macOS（zsh）：**
 > ```bash
-> export PATH="$(npm prefix -g)/bin:$PATH"
+> echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 > ```
-> 然后把这行加到你的 `~/.zshrc`（macOS）或 `~/.bashrc`（Linux）文件末尾，确保下次打开终端也能用。
+>
+> **Linux（bash）：**
+> ```bash
+> echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc
+> ```
+>
+> 执行后 `openclaw` 命令立刻可用，且下次打开终端也不会丢失。
 
 ### Windows
 
 以**管理员身份**打开 PowerShell，运行以下命令：
 
 ```powershell
-npm install -g openclaw@latest --ignore-scripts
+npm install -g openclaw@latest
 ```
 
-> 💡 `--ignore-scripts` 用于跳过 `node-llama-cpp` 等依赖的编译脚本（需要 cmake/C++ 构建工具，Windows 上通常未安装）。跳过不影响 OpenClaw 核心功能。
+> ⚠️ 安装过程中可能出现 `node-llama-cpp` 相关的红色报错（如 `cmake` 找不到、编译失败），**这是正常的，不影响安装**。`node-llama-cpp` 是可选的本地 AI 嵌入组件，编译失败只会产生警告，不会中断安装。AI 聊天、模型调用、插件等核心功能完全不受影响。
 
 安装完成后，运行新手引导和后台守护进程：
 
@@ -193,13 +201,14 @@ openclaw onboard --install-daemon
 > ```
 > 然后重新运行安装命令。
 
-> ⚠️ 如果安装完成后 `openclaw` 命令找不到，重启 PowerShell 再试。如果仍然找不到，手动把 npm 全局路径加到系统 PATH：
+> ⚠️ 如果安装完成后 `openclaw` 命令找不到，重启 PowerShell 再试。如果仍然找不到，运行以下命令把 npm 全局路径永久加到系统 PATH：
 > ```powershell
-> # 查看 npm 全局路径
-> npm prefix -g
-> # 把输出的路径添加到系统环境变量 PATH 中
-> # 方法：右键「此电脑」→ 属性 → 高级系统设置 → 环境变量 → 编辑 Path → 新建 → 粘贴路径
+> # 一条命令搞定（以管理员身份运行 PowerShell）
+> $npmPath = (npm prefix -g); [Environment]::SetEnvironmentVariable("PATH", "$npmPath;" + [Environment]::GetEnvironmentVariable("PATH", "Machine"), "Machine")
 > ```
+> 运行后重启 PowerShell，`openclaw` 即可使用。
+>
+> > 💡 npm 全局路径通常是 `C:\Users\你的用户名\AppData\Roaming\npm`，上面的命令会自动检测，不需要手动查找。
 
 ### 验证安装成功
 
@@ -328,15 +337,14 @@ echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc
 
 **Windows：**
 
-重启 PowerShell。如果仍然找不到，手动把 npm 全局路径加到系统 PATH：
+重启 PowerShell。如果仍然找不到，运行以下命令永久添加 npm 全局路径到 PATH：
 
 ```powershell
-# 查看 npm 全局路径
-npm prefix -g
-
-# 把输出的路径添加到系统环境变量 PATH 中
-# 方法：右键「此电脑」→ 属性 → 高级系统设置 → 环境变量 → 编辑 Path → 新建 → 粘贴路径
+# 一条命令搞定（以管理员身份运行 PowerShell）
+$npmPath = (npm prefix -g); [Environment]::SetEnvironmentVariable("PATH", "$npmPath;" + [Environment]::GetEnvironmentVariable("PATH", "Machine"), "Machine")
 ```
+
+运行后重启 PowerShell 即可。
 
 ### Q: 安装 OpenClaw 时 `sharp` 报错？
 
@@ -391,7 +399,7 @@ openclaw plugins uninstall openclaw-newclaw-auth
 
 | 操作 | 命令 |
 |---|---|
-| 安装 OpenClaw（全平台） | `npm install -g openclaw@latest --ignore-scripts` |
+| 安装 OpenClaw（全平台） | `npm install -g openclaw@latest` |
 | 运行新手引导 | `openclaw onboard --install-daemon` |
 | 安装 NewClaw 插件 | `openclaw plugins install openclaw-newclaw-auth` |
 | 配置 API Key | `openclaw auth newclaw` |
@@ -401,4 +409,4 @@ openclaw plugins uninstall openclaw-newclaw-auth
 | 打开管理面板 | `openclaw dashboard` |
 | 重新配置 Key | `openclaw auth newclaw` |
 | 卸载插件 | `openclaw plugins uninstall openclaw-newclaw-auth` |
-| 更新 OpenClaw | `npm install -g openclaw@latest --ignore-scripts` |
+| 更新 OpenClaw | `npm install -g openclaw@latest` |
