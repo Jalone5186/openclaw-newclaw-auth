@@ -1,5 +1,5 @@
 import { PROVIDER_KEYS, NEWCLAW_BASE_URL } from "./constants.js";
-import type { NewClawModel } from "./types.js";
+import type { NewClawModel, FetchErrorKind } from "./types.js";
 import { fetchModels, saveCache, toOpenClawModels } from "./models.js";
 
 interface ProviderAuthContext {
@@ -65,11 +65,19 @@ export function buildAuth(_api: OpenClawPluginApi): ProviderAuthDefinition[] {
 
         // Step 1.5: Verify universal key
         const spin = ctx.prompter.progress("Verifying API key...");
-        const models = await fetchModels(universalKey.trim());
-        if (!models) {
-          spin.stop("API key verification failed");
-          throw new Error("Invalid API key — could not reach NewClaw API");
+        const result = await fetchModels(universalKey.trim());
+        if (result.models === null) {
+          const errorMessages: Record<FetchErrorKind, string> = {
+            invalid_key: "API key is invalid or expired. Please check your key at newclaw.ai",
+            network: "Cannot reach NewClaw API. Please check your network connection and try again",
+            timeout: "Request timed out. NewClaw API may be temporarily unavailable, please try again later",
+            server: `NewClaw API server error: ${result.message ?? "unknown"}. Please try again later`,
+            unknown: `Unexpected error: ${result.message ?? "unknown"}`,
+          };
+          spin.stop("Verification failed");
+          throw new Error(errorMessages[result.error ?? "unknown"]);
         }
+        const models = result.models;
         spin.stop(`Verified! Found ${models.length} models`);
 
         // Step 2: Provider-specific keys (ALL OPTIONAL)

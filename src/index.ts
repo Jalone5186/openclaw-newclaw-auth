@@ -110,7 +110,7 @@ const plugin = {
       });
     } else {
       api.logger.info(
-        "NewClaw: no API key found. Run auth setup to configure."
+        "NewClaw: no API key found. Run: openclaw models auth login --provider newclaw"
       );
     }
   },

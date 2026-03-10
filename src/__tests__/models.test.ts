@@ -25,12 +25,13 @@ describe("fetchModels", () => {
 
     const { fetchModels } = await import("../models.js");
     const result = await fetchModels("sk-test-key");
-    expect(result).toHaveLength(3);
-    expect(result![0].id).toBe("claude-3-opus");
-    expect(result![1].owned_by).toBe("openai");
+    expect(result.models).toHaveLength(3);
+    expect(result.error).toBeUndefined();
+    expect(result.models![0].id).toBe("claude-3-opus");
+    expect(result.models![1].owned_by).toBe("openai");
   });
 
-  it("returns null on 401 response", async () => {
+  it("returns invalid_key error on 401 response", async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 401,
@@ -38,20 +39,24 @@ describe("fetchModels", () => {
 
     const { fetchModels } = await import("../models.js");
     const result = await fetchModels("sk-bad-key");
-    expect(result).toBeNull();
+    expect(result.models).toBeNull();
+    expect(result.error).toBe("invalid_key");
+    expect(result.message).toContain("401");
   });
 
-  it("returns null on network error", async () => {
+  it("returns network error on fetch failure", async () => {
     global.fetch = vi.fn().mockRejectedValue(
       new Error("Network error")
     ) as unknown as typeof fetch;
 
     const { fetchModels } = await import("../models.js");
     const result = await fetchModels("sk-test-key");
-    expect(result).toBeNull();
+    expect(result.models).toBeNull();
+    expect(result.error).toBe("network");
+    expect(result.message).toBe("Network error");
   });
 
-  it("returns null on non-200, non-401 error", async () => {
+  it("returns server error on non-200, non-401 response", async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 500,
@@ -59,12 +64,38 @@ describe("fetchModels", () => {
 
     const { fetchModels } = await import("../models.js");
     const result = await fetchModels("sk-test-key");
-    expect(result).toBeNull();
+    expect(result.models).toBeNull();
+    expect(result.error).toBe("server");
+    expect(result.message).toContain("500");
+  });
+
+  it("returns invalid_key error on 403 response", async () => {
+    global.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 403,
+    }) as unknown as typeof fetch;
+
+    const { fetchModels } = await import("../models.js");
+    const result = await fetchModels("sk-test-key");
+    expect(result.models).toBeNull();
+    expect(result.error).toBe("invalid_key");
+    expect(result.message).toContain("403");
+  });
+
+  it("returns timeout error when request is aborted", async () => {
+    global.fetch = vi.fn().mockRejectedValue(
+      new Error("The operation was aborted")
+    ) as unknown as typeof fetch;
+
+    const { fetchModels } = await import("../models.js");
+    const result = await fetchModels("sk-test-key");
+    expect(result.models).toBeNull();
+    expect(result.error).toBe("timeout");
   });
 });
 
 describe("toOpenClawModels", () => {
-  it("converts NewClawModel array to ModelDefinitionConfig array", async () => {
+  it("converts NewClawModel array to ModelDefinitionConfig array with vendor-specific defaults", async () => {
     const { toOpenClawModels } = await import("../models.js");
     const result = toOpenClawModels(FAKE_MODELS);
     expect(result).toHaveLength(3);
@@ -72,11 +103,18 @@ describe("toOpenClawModels", () => {
       expect(m.api).toBe("openai-completions");
       expect(m.reasoning).toBe(false);
       expect(m.input).toEqual(["text"]);
-      expect(m.contextWindow).toBe(128_000);
-      expect(m.maxTokens).toBe(8_192);
       expect(typeof m.cost.input).toBe("number");
     }
+    // Anthropic → 200k context
     expect(result[0].id).toBe("claude-3-opus");
+    expect(result[0].contextWindow).toBe(200_000);
+    expect(result[0].maxTokens).toBe(8_192);
+    // OpenAI → 128k context
+    expect(result[1].contextWindow).toBe(128_000);
+    expect(result[1].maxTokens).toBe(16_384);
+    // Google → 1M context
+    expect(result[2].contextWindow).toBe(1_000_000);
+    expect(result[2].maxTokens).toBe(8_192);
   });
 
   it("maps id and name from model.id", async () => {
@@ -84,6 +122,26 @@ describe("toOpenClawModels", () => {
     const result = toOpenClawModels([FAKE_MODELS[0]]);
     expect(result[0].id).toBe("claude-3-opus");
     expect(result[0].name).toBe("claude-3-opus");
+  });
+
+  it("uses model-level context_window/max_tokens when present in API response", async () => {
+    const { toOpenClawModels } = await import("../models.js");
+    const modelWithExtendedFields = {
+      ...FAKE_MODELS[0],
+      context_window: 500_000,
+      max_tokens: 32_000,
+    };
+    const result = toOpenClawModels([modelWithExtendedFields]);
+    expect(result[0].contextWindow).toBe(500_000);
+    expect(result[0].maxTokens).toBe(32_000);
+  });
+
+  it("falls back to 128k/8k for unknown vendor", async () => {
+    const { toOpenClawModels } = await import("../models.js");
+    const unknownVendor = { id: "custom-model", object: "model", created: 1700000000, owned_by: "some-unknown-vendor" };
+    const result = toOpenClawModels([unknownVendor]);
+    expect(result[0].contextWindow).toBe(128_000);
+    expect(result[0].maxTokens).toBe(8_192);
   });
 });
 
