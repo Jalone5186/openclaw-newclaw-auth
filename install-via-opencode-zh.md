@@ -27,24 +27,34 @@
   - Linux：运行 `curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash && source ~/.bashrc && nvm install 22`
 - 安装后再次运行 `node -v` 确认版本 >= 22
 
-## 步骤 2：安装 OpenClaw
+## 步骤 2：检查 Git
+
+运行 `git --version` 检查是否已安装。
+
+- 如果输出版本号（如 `git version 2.x.x`），直接进入步骤 3
+- 如果命令不存在，需要安装 Git：
+  - macOS：运行 `xcode-select --install`，弹出对话框后点安装
+  - Linux：运行 `sudo apt update && sudo apt install -y git`
+- 安装后再次运行 `git --version` 确认成功
+
+## 步骤 3：安装 OpenClaw
 
 先运行 `which openclaw` 或 `openclaw --version` 检查是否已安装。
 
-- 如果已安装，跳到步骤 3
-- 如果未安装，运行：`npm install -g openclaw@latest`（不需要 Git，纯 npm 安装）
+- 如果已安装，跳到步骤 4
+- 如果未安装，运行：`npm install -g openclaw@latest`
 - 安装完成后运行：`openclaw onboard --install-daemon`
 - 如果遇到 sharp 相关错误，改用：`SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest`
 - 如果安装后 `openclaw` 命令找不到，运行 `export PATH="$(npm prefix -g)/bin:$PATH"` 修复
 - 确认安装成功：运行 `openclaw --version`，应该输出版本号
 
-## 步骤 3：安装 NewClaw 插件
+## 步骤 4：安装 NewClaw 插件
 
 运行：`openclaw plugins install openclaw-newclaw-auth`
 
 安装完成后运行 `openclaw plugins list` 确认列表中有 `openclaw-newclaw-auth`。
 
-## 步骤 4：配置 NewClaw API Key
+## 步骤 5：配置 NewClaw API Key
 
 提醒用户："请提供你的 NewClaw API Key（从 https://newclaw.ai 获取，以 sk- 开头）"
 
@@ -68,7 +78,7 @@
 
 注意：如果文件已有其他内容，要合并而不是覆盖。写文件时使用原子写入（先写临时文件再 rename）。
 
-## 步骤 5：验证
+## 步骤 6：验证
 
 运行 `openclaw doctor` 确认没有红色错误。
 
@@ -86,7 +96,7 @@
 
 - OpenCode 会自动检测你的操作系统并执行对应的命令
 - 如果你的 Node.js 已经满足要求、OpenClaw 已经安装，AI 会自动跳过对应步骤
-- 步骤 4 中 AI 会暂停问你要 API Key，把你从 [newclaw.ai](https://newclaw.ai) 拿到的 Key 粘贴给它即可
+- 步骤 5 中 AI 会暂停问你要 API Key，把你从 [newclaw.ai](https://newclaw.ai) 拿到的 Key 粘贴给它即可
 - 整个过程通常 2-3 分钟完成
 
 ## 如果 OpenCode 执行失败怎么办

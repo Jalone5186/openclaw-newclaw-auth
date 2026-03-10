@@ -4,9 +4,11 @@
 
 ---
 
-## 前置条件：安装 Node.js
+## 前置条件
 
-OpenClaw 需要 **Node.js 22 或更高版本**。如果你已经安装了 Node.js 22+，可以跳到下一步。
+OpenClaw 需要 **Node.js 22+** 和 **Git**。下面分别检查和安装。
+
+### 1. 安装 Node.js
 
 打开终端（macOS/Linux）或 PowerShell（Windows），检查是否已安装：
 
@@ -14,11 +16,11 @@ OpenClaw 需要 **Node.js 22 或更高版本**。如果你已经安装了 Node.j
 node -v
 ```
 
-如果输出 `v22.x.x` 或更高版本，直接跳到「[第一步：安装 OpenClaw](#第一步安装-openclaw)」。
+如果输出 `v22.x.x` 或更高版本，跳到「[安装 Git](#2-安装-git)」。
 
 如果没有安装或版本低于 22，按你的操作系统选择安装方式：
 
-### macOS
+#### macOS
 
 打开「终端」应用（在启动台搜索"终端"），粘贴以下命令并按回车：
 
@@ -38,7 +40,7 @@ node -v
 # 应该输出 v22.x.x
 ```
 
-### Linux（Ubuntu/Debian）
+#### Linux（Ubuntu/Debian）
 
 打开终端，粘贴以下命令：
 
@@ -54,7 +56,7 @@ node -v
 # 应该输出 v22.x.x
 ```
 
-### Windows
+#### Windows
 
 Windows 有两种方式，选一种即可：
 
@@ -80,11 +82,52 @@ node -v
 # 应该输出 v22.x.x
 ```
 
+### 2. 安装 Git
+
+Git 用于版本控制和代码管理，OpenClaw 在执行编程任务时需要它来跟踪文件变更。
+
+检查是否已安装：
+
+```bash
+git --version
+```
+
+如果输出 `git version x.x.x`，跳到「[第一步：安装 OpenClaw](#第一步安装-openclaw)」。
+
+如果提示命令不存在，按操作系统安装：
+
+#### macOS
+
+```bash
+xcode-select --install
+```
+
+弹出安装对话框后点「安装」，等待完成即可（会自动安装 Git）。
+
+#### Linux（Ubuntu/Debian）
+
+```bash
+sudo apt update && sudo apt install -y git
+```
+
+#### Windows
+
+以管理员身份打开 PowerShell，运行：
+
+```powershell
+winget install Git.Git
+```
+
+安装完成后**重启 PowerShell**，然后验证：
+
+```bash
+git --version
+# 应该输出 git version x.x.x
+```
+
 ---
 
 ## 第一步：安装 OpenClaw
-
-> 💡 只需要 Node.js 和 npm，**不需要安装 Git**。
 
 ### macOS / Linux
 
