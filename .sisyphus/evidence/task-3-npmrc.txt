@@ -1,0 +1,7 @@
+QA 2 - .npmrc has public access:
+Command: cat .npmrc
+
+Output:
+access=public
+
+PASS.

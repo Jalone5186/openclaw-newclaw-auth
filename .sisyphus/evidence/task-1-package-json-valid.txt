@@ -1,0 +1,1 @@
+{"name":"openclaw-newclaw-auth","type":"module","main":"dist/index.js","ext":["./dist/index.js"]}

@@ -1,0 +1,63 @@
+
+> openclaw-newclaw-auth@0.1.0 test
+> vitest run --reporter=verbose
+
+
+ RUN  v2.1.9 /Users/jalone/Desktop/Work/00Work/WorkSpace/AIPluginWorkspace/openclaw-newclaw-auth
+
+ ✓ src/__tests__/constants.test.ts > PROVIDER_KEYS > has exactly 5 entries
+ ✓ src/__tests__/constants.test.ts > PROVIDER_KEYS > has correct provider IDs
+ ✓ src/__tests__/constants.test.ts > PROVIDER_KEYS > each entry has required shape
+ ✓ src/__tests__/constants.test.ts > PROVIDER_KEYS > envVars are prefixed with NEWCLAW_
+ ✓ src/__tests__/constants.test.ts > NEWCLAW_BASE_URL > equals https://newclaw.ai
+ ✓ src/__tests__/constants.test.ts > REFRESH_INTERVAL_MS > equals 6 hours in milliseconds
+ ✓ src/__tests__/constants.test.ts > PROVIDER_ID and PROVIDER_LABEL > PROVIDER_ID equals newclaw
+ ✓ src/__tests__/constants.test.ts > PROVIDER_ID and PROVIDER_LABEL > PROVIDER_LABEL equals NewClaw AI
+ ✓ src/__tests__/auth.test.ts > buildAuthResult > returns correct top-level shape with all required keys
+ ✓ src/__tests__/auth.test.ts > buildAuthResult > profiles has one entry with default id and universal key credential
+ ✓ src/__tests__/auth.test.ts > buildAuthResult > configPatch has models.providers.newclaw with correct shape
+ ✓ src/__tests__/auth.test.ts > buildAuthResult > no vendor sub-providers when no provider-specific keys given
+ ✓ src/__tests__/auth.test.ts > buildAuthResult > creates newclaw-anthropic sub-provider when anthropic key given and models exist
+ ✓ src/__tests__/auth.test.ts > buildAuthResult > does not create sub-provider for vendor with key but no matching models
+ ✓ src/__tests__/auth.test.ts > buildAuthResult > creates multiple vendor sub-providers when multiple keys given
+ ✓ src/__tests__/auth.test.ts > buildAuthResult > defaultModel uses vendor sub-provider model when vendor key present
+ ✓ src/__tests__/auth.test.ts > buildAuthResult > defaultModel uses universal provider when no vendor keys given
+ ✓ src/__tests__/auth.test.ts > buildAuthResult > defaultModel is undefined when models array is empty
+ ✓ src/__tests__/auth.test.ts > buildAuthResult > notes is a non-empty array of strings
+stderr | src/__tests__/models.test.ts > fetchModels > returns null on 401 response
+NewClaw: 401 — invalid API key
+
+stderr | src/__tests__/models.test.ts > fetchModels > returns null on network error
+NewClaw: fetch error: Network error
+
+stderr | src/__tests__/models.test.ts > fetchModels > returns null on non-200, non-401 error
+NewClaw: HTTP 500 from /v1/models
+
+stderr | src/__tests__/models.test.ts > resolveModels > falls back to cache when fetch returns null (401)
+NewClaw: 401 — invalid API key
+NewClaw: using cached models
+
+stderr | src/__tests__/models.test.ts > resolveModels > returns empty array when fetch fails and no cache exists
+NewClaw: fetch error: Network error
+NewClaw: no models available
+
+ ✓ src/__tests__/models.test.ts > fetchModels > returns parsed model array on 200 response
+ ✓ src/__tests__/models.test.ts > fetchModels > returns null on 401 response
+ ✓ src/__tests__/models.test.ts > fetchModels > returns null on network error
+ ✓ src/__tests__/models.test.ts > fetchModels > returns null on non-200, non-401 error
+ ✓ src/__tests__/models.test.ts > toOpenClawModels > converts NewClawModel array to ModelDefinitionConfig array
+ ✓ src/__tests__/models.test.ts > toOpenClawModels > maps id and name from model.id
+ ✓ src/__tests__/models.test.ts > saveCache / loadCache > saves and loads cache roundtrip correctly
+ ✓ src/__tests__/models.test.ts > saveCache / loadCache > cache file does not contain API key secrets
+ ✓ src/__tests__/models.test.ts > saveCache / loadCache > loadCache returns null when file is missing
+ ✓ src/__tests__/models.test.ts > saveCache / loadCache > loadCache returns null and deletes corrupt file
+ ✓ src/__tests__/models.test.ts > resolveModels > fetches and saves to cache on success
+ ✓ src/__tests__/models.test.ts > resolveModels > falls back to cache when fetch returns null (401)
+ ✓ src/__tests__/models.test.ts > resolveModels > returns empty array when fetch fails and no cache exists
+ ✓ src/__tests__/models.test.ts > REFRESH_INTERVAL_MS > equals 6 hours in milliseconds
+
+ Test Files  3 passed (3)
+      Tests  33 passed (33)
+   Start at  03:26:31
+   Duration  330ms (transform 128ms, setup 0ms, collect 146ms, tests 33ms, environment 0ms, prepare 238ms)
+

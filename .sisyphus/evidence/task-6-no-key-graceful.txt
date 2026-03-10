@@ -1,0 +1,2 @@
+NewClaw: no API key found. Run auth setup to configure.
+OK

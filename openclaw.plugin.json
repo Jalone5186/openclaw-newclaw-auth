@@ -1,0 +1,11 @@
+{
+  "id": "openclaw-newclaw-auth",
+  "name": "NewClaw Auth",
+  "description": "NewClaw AI API integration — all models through newclaw.ai",
+  "providers": ["newclaw", "newclaw-anthropic", "newclaw-google", "newclaw-openai", "newclaw-xai", "newclaw-deepseek"],
+  "configSchema": {
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {}
+  }
+}

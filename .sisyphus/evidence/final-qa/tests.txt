@@ -1,0 +1,33 @@
+
+> openclaw-newclaw-auth@0.1.0 test
+> vitest run
+
+
+ RUN  v2.1.9 /Users/jalone/Desktop/Work/00Work/WorkSpace/AIPluginWorkspace/openclaw-newclaw-auth
+
+ ✓ src/__tests__/constants.test.ts (8 tests) 4ms
+ ✓ src/__tests__/auth.test.ts (11 tests) 5ms
+stderr | src/__tests__/models.test.ts > fetchModels > returns null on 401 response
+NewClaw: 401 — invalid API key
+
+stderr | src/__tests__/models.test.ts > fetchModels > returns null on network error
+NewClaw: fetch error: Network error
+
+stderr | src/__tests__/models.test.ts > fetchModels > returns null on non-200, non-401 error
+NewClaw: HTTP 500 from /v1/models
+
+stderr | src/__tests__/models.test.ts > resolveModels > falls back to cache when fetch returns null (401)
+NewClaw: 401 — invalid API key
+NewClaw: using cached models
+
+stderr | src/__tests__/models.test.ts > resolveModels > returns empty array when fetch fails and no cache exists
+NewClaw: fetch error: Network error
+NewClaw: no models available
+
+ ✓ src/__tests__/models.test.ts (14 tests) 26ms
+
+ Test Files  3 passed (3)
+      Tests  33 passed (33)
+   Start at  03:38:55
+   Duration  385ms (transform 123ms, setup 0ms, collect 175ms, tests 36ms, environment 0ms, prepare 260ms)
+

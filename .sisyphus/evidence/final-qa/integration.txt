@@ -1,0 +1,4 @@
+=== Plugin Export Test ===
+newclaw 1 custom
+=== No-Key Graceful Test ===
+GRACEFUL

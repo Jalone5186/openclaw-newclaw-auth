@@ -1,0 +1,20 @@
+npm notice
+npm notice 📦  openclaw-newclaw-auth@0.1.0
+npm notice Tarball Contents
+npm notice 1.1kB LICENSE
+npm notice 1.9kB README.md
+npm notice 726B dist/index.d.ts
+npm notice 10.0kB dist/index.js
+npm notice 366B openclaw.plugin.json
+npm notice 646B package.json
+npm notice Tarball Details
+npm notice name: openclaw-newclaw-auth
+npm notice version: 0.1.0
+npm notice filename: openclaw-newclaw-auth-0.1.0.tgz
+npm notice package size: 5.3 kB
+npm notice unpacked size: 14.8 kB
+npm notice shasum: 706ec738c128809ba7c456b1e40f794807cf409c
+npm notice integrity: sha512-m/VGrX1+JLRhz[...]CknGbAXEsFACA==
+npm notice total files: 6
+npm notice
+openclaw-newclaw-auth-0.1.0.tgz
