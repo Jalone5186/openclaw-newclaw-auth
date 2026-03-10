@@ -4,7 +4,16 @@
 
 OpenClaw 插件 —— 将 NewClaw AI 注册为模型提供商，通过交互式向导配置 API Key，自动获取并刷新模型列表。
 
-## 安装
+## 安装教程
+
+> **第一次使用 OpenClaw？** 请按照完整教程一步步操作：
+>
+> - [完整安装教程（中文）](./install-guide-zh.md) — 从 Node.js 安装到插件配置，覆盖 macOS / Linux / Windows 三大平台
+> - [通过 OpenCode 一键安装（中文）](./install-via-opencode-zh.md) — 复制一段提示词给 OpenCode，AI 自动完成全部安装
+
+## 快速安装
+
+如果你已经在用 OpenClaw：
 
 ```bash
 openclaw plugins install openclaw-newclaw-auth
