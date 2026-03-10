@@ -32,7 +32,8 @@
 先运行 `which openclaw` 或 `openclaw --version` 检查是否已安装。
 
 - 如果已安装，跳到步骤 3
-- 如果未安装，运行安装脚本：`curl -fsSL https://openclaw.ai/install.sh | bash -s -- --no-onboard`
+- 如果未安装，运行：`npm install -g openclaw@latest`（不需要 Git，纯 npm 安装）
+- 安装完成后运行：`openclaw onboard --install-daemon`
 - 如果遇到 sharp 相关错误，改用：`SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest`
 - 如果安装后 `openclaw` 命令找不到，运行 `export PATH="$(npm prefix -g)/bin:$PATH"` 修复
 - 确认安装成功：运行 `openclaw --version`，应该输出版本号

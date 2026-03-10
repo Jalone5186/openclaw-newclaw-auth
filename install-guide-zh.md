@@ -84,23 +84,29 @@ node -v
 
 ## 第一步：安装 OpenClaw
 
+> 💡 只需要 Node.js 和 npm，**不需要安装 Git**。
+
 ### macOS / Linux
 
-打开终端，粘贴以下命令：
+打开终端，依次运行以下两条命令：
 
 ```bash
-curl -fsSL https://openclaw.ai/install.sh | bash
+npm install -g openclaw@latest
 ```
 
-这条命令会自动完成以下操作：
-- 通过 npm 全局安装 OpenClaw
-- 运行新手引导向导（按提示操作即可）
-- 安装后台守护进程
+安装完成后，运行新手引导和后台守护进程：
 
-> ⚠️ 如果安装过程中提示 `sharp` 相关错误，改用这条命令：
+```bash
+openclaw onboard --install-daemon
+```
+
+按照引导提示操作即可（一般一路回车）。
+
+> ⚠️ 如果安装过程中提示 `sharp` 相关错误，改用这条命令安装：
 > ```bash
-> SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest && openclaw onboard --install-daemon
+> SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest
 > ```
+> 然后再运行 `openclaw onboard --install-daemon`。
 
 > ⚠️ 如果安装完成后运行 `openclaw` 提示「命令未找到」，执行：
 > ```bash
@@ -110,16 +116,19 @@ curl -fsSL https://openclaw.ai/install.sh | bash
 
 ### Windows
 
-以管理员身份打开 PowerShell，粘贴以下命令：
+以管理员身份打开 PowerShell，运行以下命令：
 
 ```powershell
-iwr -useb https://openclaw.ai/install.ps1 | iex
+npm install -g openclaw@latest
 ```
 
-这条命令会自动完成以下操作：
-- 通过 npm 全局安装 OpenClaw
-- 运行新手引导向导（按提示操作即可）
-- 安装后台守护进程
+安装完成后，运行新手引导和后台守护进程：
+
+```powershell
+openclaw onboard --install-daemon
+```
+
+按照引导提示操作即可。
 
 > ⚠️ 如果 PowerShell 提示执行策略错误，先运行：
 > ```powershell
@@ -127,10 +136,12 @@ iwr -useb https://openclaw.ai/install.ps1 | iex
 > ```
 > 然后重新运行安装命令。
 
-> ⚠️ 如果安装脚本报错，可以手动安装：
+> ⚠️ 如果安装完成后 `openclaw` 命令找不到，重启 PowerShell 再试。如果仍然找不到，手动把 npm 全局路径加到系统 PATH：
 > ```powershell
-> npm install -g openclaw@latest
-> openclaw onboard --install-daemon
+> # 查看 npm 全局路径
+> npm prefix -g
+> # 把输出的路径添加到系统环境变量 PATH 中
+> # 方法：右键「此电脑」→ 属性 → 高级系统设置 → 环境变量 → 编辑 Path → 新建 → 粘贴路径
 > ```
 
 ### 验证安装成功
@@ -321,8 +332,8 @@ openclaw plugins uninstall openclaw-newclaw-auth
 
 | 操作 | 命令 |
 |---|---|
-| 安装 OpenClaw（macOS/Linux） | `curl -fsSL https://openclaw.ai/install.sh \| bash` |
-| 安装 OpenClaw（Windows） | `iwr -useb https://openclaw.ai/install.ps1 \| iex` |
+| 安装 OpenClaw（全平台） | `npm install -g openclaw@latest` |
+| 运行新手引导 | `openclaw onboard --install-daemon` |
 | 安装 NewClaw 插件 | `openclaw plugins install openclaw-newclaw-auth` |
 | 配置 API Key | `openclaw auth newclaw` |
 | 检查安装状态 | `openclaw doctor` |
