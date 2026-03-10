@@ -84,7 +84,7 @@ node -v
 
 ### 2. 安装 Git
 
-Git 用于版本控制和代码管理，OpenClaw 在执行编程任务时需要它来跟踪文件变更。
+Git 用于版本控制和代码管理。OpenClaw 的部分依赖包需要通过 Git 拉取，**不安装 Git 会导致 OpenClaw 安装失败**。
 
 检查是否已安装：
 
@@ -118,12 +118,22 @@ sudo apt update && sudo apt install -y git
 winget install Git.Git
 ```
 
-安装完成后**重启 PowerShell**，然后验证：
+安装完成后**关闭并重新打开 PowerShell**（⚠️ 必须重启，否则 Git 不会生效），然后验证：
 
-```bash
+```powershell
 git --version
 # 应该输出 git version x.x.x
 ```
+
+> ⚠️ 如果重启 PowerShell 后仍然提示找不到 `git` 命令，需要手动添加 Git 到 PATH：
+> ```powershell
+> # 临时添加（当前会话生效）
+> $env:PATH = "C:\Program Files\Git\cmd;$env:PATH"
+>
+> # 永久添加（以管理员身份运行）
+> [Environment]::SetEnvironmentVariable("PATH", "C:\Program Files\Git\cmd;" + [Environment]::GetEnvironmentVariable("PATH", "Machine"), "Machine")
+> ```
+> 添加后重启 PowerShell 再验证。
 
 ---
 
@@ -134,8 +144,10 @@ git --version
 打开终端，依次运行以下两条命令：
 
 ```bash
-npm install -g openclaw@latest
+npm install -g openclaw@latest --ignore-scripts
 ```
+
+> 💡 `--ignore-scripts` 用于跳过 `node-llama-cpp` 等依赖的编译脚本（需要 cmake 工具链，大多数用户没有安装）。跳过不影响 OpenClaw 核心功能。
 
 安装完成后，运行新手引导和后台守护进程：
 
@@ -147,7 +159,7 @@ openclaw onboard --install-daemon
 
 > ⚠️ 如果安装过程中提示 `sharp` 相关错误，改用这条命令安装：
 > ```bash
-> SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest
+> SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest --ignore-scripts
 > ```
 > 然后再运行 `openclaw onboard --install-daemon`。
 
@@ -159,11 +171,13 @@ openclaw onboard --install-daemon
 
 ### Windows
 
-以管理员身份打开 PowerShell，运行以下命令：
+以**管理员身份**打开 PowerShell，运行以下命令：
 
 ```powershell
-npm install -g openclaw@latest
+npm install -g openclaw@latest --ignore-scripts
 ```
+
+> 💡 `--ignore-scripts` 用于跳过 `node-llama-cpp` 等依赖的编译脚本（需要 cmake/C++ 构建工具，Windows 上通常未安装）。跳过不影响 OpenClaw 核心功能。
 
 安装完成后，运行新手引导和后台守护进程：
 
@@ -208,6 +222,8 @@ openclaw plugins install openclaw-newclaw-auth
 ```
 
 等待安装完成，终端会提示安装成功。
+
+> ⚠️ **关于安全警告**：安装时 OpenClaw 可能会弹出安全提示，提示该插件存在"环境变量访问+网络发送"代码模式。**这是正常的**——NewClaw 插件需要读取你的 API Key（环境变量）并发送到 `newclaw.ai` 进行认证和模型调用，属于插件的正常行为。选择「允许」即可。
 
 ---
 
@@ -375,7 +391,7 @@ openclaw plugins uninstall openclaw-newclaw-auth
 
 | 操作 | 命令 |
 |---|---|
-| 安装 OpenClaw（全平台） | `npm install -g openclaw@latest` |
+| 安装 OpenClaw（全平台） | `npm install -g openclaw@latest --ignore-scripts` |
 | 运行新手引导 | `openclaw onboard --install-daemon` |
 | 安装 NewClaw 插件 | `openclaw plugins install openclaw-newclaw-auth` |
 | 配置 API Key | `openclaw auth newclaw` |
@@ -385,4 +401,4 @@ openclaw plugins uninstall openclaw-newclaw-auth
 | 打开管理面板 | `openclaw dashboard` |
 | 重新配置 Key | `openclaw auth newclaw` |
 | 卸载插件 | `openclaw plugins uninstall openclaw-newclaw-auth` |
-| 更新 OpenClaw | `npm install -g openclaw@latest` |
+| 更新 OpenClaw | `npm install -g openclaw@latest --ignore-scripts` |
