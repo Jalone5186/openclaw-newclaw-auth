@@ -17,6 +17,14 @@ If you already have OpenClaw running:
 
 ```bash
 openclaw plugins install openclaw-newclaw-auth
+openclaw plugins enable openclaw-newclaw-auth
+```
+
+If the gateway is running, restart it to load the plugin:
+
+```bash
+openclaw gateway stop
+openclaw gateway run
 ```
 
 ## Quick Setup
@@ -24,10 +32,10 @@ openclaw plugins install openclaw-newclaw-auth
 Run the auth wizard after installing:
 
 ```bash
-openclaw models auth login --provider newclaw
+openclaw models auth login --provider newclaw --set-default
 ```
 
-The wizard asks for your universal `NEWCLAW_API_KEY` first (required). Then you can optionally add provider-specific keys if you want to route requests to a specific underlying model provider (Claude, Gemini, GPT, etc.). If you skip provider keys, NewClaw routes automatically.
+The wizard detects existing API keys and lets you reuse them. It asks for your universal `NEWCLAW_API_KEY` first (required). Then you can optionally add provider-specific keys if you want to route requests to a specific underlying model provider (Claude, Gemini, GPT, etc.). If you skip provider keys, NewClaw routes automatically.
 
 ## Provider-Specific Keys
 

@@ -17,6 +17,14 @@ OpenClaw 插件 —— 将 NewClaw AI 注册为模型提供商，通过交互式
 
 ```bash
 openclaw plugins install openclaw-newclaw-auth
+openclaw plugins enable openclaw-newclaw-auth
+```
+
+如果 gateway 正在运行，需要重启才能加载新插件：
+
+```bash
+openclaw gateway stop
+openclaw gateway run
 ```
 
 ## 快速配置
@@ -24,13 +32,14 @@ openclaw plugins install openclaw-newclaw-auth
 安装后运行认证向导：
 
 ```bash
-openclaw models auth login --provider newclaw
+openclaw models auth login --provider newclaw --set-default
 ```
 
 向导流程：
-1. 输入 NewClaw 通用 API Key（必填，从 [newclaw.ai](https://newclaw.ai) 获取）
-2. 自动验证 Key 有效性并拉取模型列表
-3. 逐个提示输入厂商专用 Key（全部可跳过，按回车即可）
+1. 自动检测已有 API Key，可选择复用或输入新 Key
+2. 输入 NewClaw 通用 API Key（必填，从 [newclaw.ai](https://newclaw.ai) 获取）
+3. 自动验证 Key 有效性并拉取模型列表
+4. 逐个提示输入厂商专用 Key（全部可跳过，按回车即可）
 
 配置完成后，所有模型自动注入 OpenClaw 配置，即刻可用。
 

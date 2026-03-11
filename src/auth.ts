@@ -1,14 +1,19 @@
-import { PROVIDER_KEYS, NEWCLAW_BASE_URL } from "./constants.js";
+import { PROVIDER_ID, PROVIDER_KEYS, NEWCLAW_BASE_URL } from "./constants.js";
 import type { NewClawModel, FetchErrorKind } from "./types.js";
 import { fetchModels, saveCache, toOpenClawModels } from "./models.js";
 
 interface ProviderAuthContext {
+  config: Record<string, unknown>;
   prompter: {
     text: (opts: {
       message: string;
       placeholder?: string;
       validate?: (v: string) => string | undefined;
     }) => Promise<string>;
+    select?: <T>(opts: {
+      message: string;
+      options: Array<{ value: T; label: string; hint?: string }>;
+    }) => Promise<T>;
     progress: (msg: string) => { stop: (msg: string) => void };
   };
 }
@@ -30,8 +35,17 @@ interface AuthProfileCredential {
 interface ProviderAuthResult {
   profiles: Array<{ profileId: string; credential: AuthProfileCredential }>;
   configPatch?: {
+    auth?: {
+      order?: Record<string, string[]>;
+    };
     models: {
       providers: Record<string, ModelProviderConfig>;
+    };
+    agents?: {
+      defaults?: {
+        model?: { primary: string };
+        models?: Record<string, Record<string, unknown>>;
+      };
     };
   };
   defaultModel?: string;
@@ -49,6 +63,27 @@ interface ProviderAuthDefinition {
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
 interface OpenClawPluginApi {}
 
+export function maskKey(key: string): string {
+  if (key.length <= 8) return "****";
+  return key.slice(0, 6) + "****" + key.slice(-4);
+}
+
+export function findExistingApiKey(config: Record<string, unknown>): string | undefined {
+  const models = config.models as Record<string, unknown> | undefined;
+  const providers = models?.providers as Record<string, Record<string, unknown>> | undefined;
+  if (!providers) return undefined;
+
+  const key = providers[PROVIDER_ID]?.apiKey;
+  if (typeof key === "string" && key.length >= 10) return key;
+
+  for (const pk of PROVIDER_KEYS) {
+    const subId = `newclaw-${pk.providerId}`;
+    const subKey = providers[subId]?.apiKey;
+    if (typeof subKey === "string" && subKey.length >= 10) return subKey;
+  }
+  return undefined;
+}
+
 export function buildAuth(_api: OpenClawPluginApi): ProviderAuthDefinition[] {
   return [
     {
@@ -57,15 +92,44 @@ export function buildAuth(_api: OpenClawPluginApi): ProviderAuthDefinition[] {
       hint: "Configure API keys for NewClaw AI models",
       kind: "custom",
       run: async (ctx: ProviderAuthContext): Promise<ProviderAuthResult> => {
-        // Step 1: Universal key (REQUIRED)
-        const universalKey = await ctx.prompter.text({
-          message: "Enter your NewClaw universal API key (from newclaw.ai)",
-          validate: (v) => (v.trim() ? undefined : "API key is required"),
-        });
+        let universalKey: string;
 
-        // Step 1.5: Verify universal key
+        const existingKey = findExistingApiKey(ctx.config ?? {});
+
+        if (existingKey && ctx.prompter.select) {
+          const choice = await ctx.prompter.select<"existing" | "new">({
+            message: `Found existing API key (${maskKey(existingKey)}). What would you like to do?`,
+            options: [
+              { value: "existing", label: "Use existing key", hint: "Update models only, keep current key" },
+              { value: "new", label: "Enter a new key" },
+            ],
+          });
+
+          if (choice === "existing") {
+            universalKey = existingKey;
+          } else {
+            universalKey = await ctx.prompter.text({
+              message: "Enter your NewClaw universal API key (from newclaw.ai)",
+              validate: (v) => (v.trim() ? undefined : "API key is required"),
+            });
+            universalKey = universalKey.trim();
+          }
+        } else if (existingKey) {
+          const answer = await ctx.prompter.text({
+            message: `Found existing key (${maskKey(existingKey)}). Press Enter to keep it, or paste a new key`,
+            placeholder: "Press Enter to keep existing key",
+          });
+          universalKey = answer.trim() || existingKey;
+        } else {
+          universalKey = await ctx.prompter.text({
+            message: "Enter your NewClaw universal API key (from newclaw.ai)",
+            validate: (v) => (v.trim() ? undefined : "API key is required"),
+          });
+          universalKey = universalKey.trim();
+        }
+
         const spin = ctx.prompter.progress("Verifying API key...");
-        const result = await fetchModels(universalKey.trim());
+        const result = await fetchModels(universalKey);
         if (result.models === null) {
           const errorMessages: Record<FetchErrorKind, string> = {
             invalid_key: "API key is invalid or expired. Please check your key at newclaw.ai",
@@ -80,7 +144,6 @@ export function buildAuth(_api: OpenClawPluginApi): ProviderAuthDefinition[] {
         const models = result.models;
         spin.stop(`Verified! Found ${models.length} models`);
 
-        // Step 2: Provider-specific keys (ALL OPTIONAL)
         const providerKeys: Record<string, string> = {};
         for (const provider of PROVIDER_KEYS) {
           const key = await ctx.prompter.text({
@@ -92,9 +155,8 @@ export function buildAuth(_api: OpenClawPluginApi): ProviderAuthDefinition[] {
           }
         }
 
-        // Step 3: Save cache (no keys stored) and return result
         saveCache(models);
-        return buildAuthResult(universalKey.trim(), providerKeys, models);
+        return buildAuthResult(universalKey, providerKeys, models);
       },
     },
   ];
@@ -116,6 +178,7 @@ export function buildAuthResult(
     },
   };
 
+  const allProviderIds: string[] = [PROVIDER_ID];
   const vendorProviders: string[] = [];
   for (const providerKey of PROVIDER_KEYS) {
     const specificKey = providerKeys[providerKey.providerId];
@@ -130,9 +193,9 @@ export function buildAuthResult(
       models: toOpenClawModels(vendorModels),
     };
     vendorProviders.push(subProviderId);
+    allProviderIds.push(subProviderId);
   }
 
-  // Default model: vendor-specific preferred, else universal
   let defaultModel: string | undefined;
   if (vendorProviders.length > 0) {
     const firstVendorId = vendorProviders[0];
@@ -143,6 +206,18 @@ export function buildAuthResult(
   }
   if (!defaultModel && allConverted.length > 0) {
     defaultModel = `newclaw/${allConverted[0].id}`;
+  }
+
+  const authOrder: Record<string, string[]> = {};
+  for (const id of allProviderIds) {
+    authOrder[id] = ["newclaw:default"];
+  }
+
+  const modelsConfig: Record<string, Record<string, unknown>> = {};
+  for (const id of allProviderIds) {
+    for (const model of providers[id].models) {
+      modelsConfig[`${id}/${model.id}`] = {};
+    }
   }
 
   const notes: string[] = [
@@ -160,7 +235,16 @@ export function buildAuthResult(
         credential: { type: "api_key" as const, provider: "newclaw", key: universalKey },
       },
     ],
-    configPatch: { models: { providers } },
+    configPatch: {
+      auth: { order: authOrder },
+      models: { providers },
+      agents: {
+        defaults: {
+          ...(defaultModel ? { model: { primary: defaultModel } } : {}),
+          models: modelsConfig,
+        },
+      },
+    },
     defaultModel,
     notes,
   };

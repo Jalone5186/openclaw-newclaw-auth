@@ -232,6 +232,18 @@ openclaw plugins install openclaw-newclaw-auth
 
 等待安装完成，终端会提示安装成功。
 
+然后启用插件：
+
+```bash
+openclaw plugins enable openclaw-newclaw-auth
+```
+
+> ⚠️ 如果 gateway 正在运行，需要重启才能加载新插件：
+> ```bash
+> openclaw gateway stop
+> openclaw gateway run
+> ```
+
 > ⚠️ **关于安全警告**：安装时 OpenClaw 可能会弹出安全提示，提示该插件存在"环境变量访问+网络发送"代码模式。**这是正常的**——NewClaw 插件需要读取你的 API Key（环境变量）并发送到 `newclaw.ai` 进行认证和模型调用，属于插件的正常行为。选择「允许」即可。
 
 ---
@@ -250,10 +262,10 @@ openclaw plugins install openclaw-newclaw-auth
 在终端运行：
 
 ```bash
-openclaw models auth login --provider newclaw
+openclaw models auth login --provider newclaw --set-default
 ```
 
-向导会一步步提示你输入：
+向导会一步步提示你输入（如果之前配置过，会检测到已有 Key 并询问是否复用）：
 
 ```
 ? Enter your NewClaw universal API key (from newclaw.ai)
@@ -354,7 +366,7 @@ SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest
 
 ### Q: 运行 `openclaw models auth login --provider newclaw` 时提示找不到 provider？
 
-确认插件已安装：
+确认插件已安装并启用：
 
 ```bash
 openclaw plugins list
@@ -364,6 +376,20 @@ openclaw plugins list
 
 ```bash
 openclaw plugins install openclaw-newclaw-auth
+openclaw plugins enable openclaw-newclaw-auth
+```
+
+如果已安装但未启用，只需启用：
+
+```bash
+openclaw plugins enable openclaw-newclaw-auth
+```
+
+如果 gateway 正在运行，重启一下：
+
+```bash
+openclaw gateway stop
+openclaw gateway run
 ```
 
 ### Q: API Key 验证失败？
@@ -381,10 +407,10 @@ openclaw plugins install openclaw-newclaw-auth
 
 ### Q: 想重新配置 Key？
 
-重新运行认证向导即可，新配置会覆盖旧的：
+重新运行认证向导即可。向导会检测到已有 Key，你可以选择复用或输入新 Key：
 
 ```bash
-openclaw models auth login --provider newclaw
+openclaw models auth login --provider newclaw --set-default
 ```
 
 ### Q: 想卸载插件？
@@ -402,11 +428,13 @@ openclaw plugins uninstall openclaw-newclaw-auth
 | 安装 OpenClaw（全平台） | `npm install -g openclaw@latest` |
 | 运行新手引导 | `openclaw onboard --install-daemon` |
 | 安装 NewClaw 插件 | `openclaw plugins install openclaw-newclaw-auth` |
-| 配置 API Key | `openclaw models auth login --provider newclaw` |
+| 启用插件 | `openclaw plugins enable openclaw-newclaw-auth` |
+| 重启 gateway | `openclaw gateway stop && openclaw gateway run` |
+| 配置 API Key | `openclaw models auth login --provider newclaw --set-default` |
 | 检查安装状态 | `openclaw doctor` |
 | 查看已装插件 | `openclaw plugins list` |
 | 查看可用模型 | `openclaw models` |
 | 打开管理面板 | `openclaw dashboard` |
-| 重新配置 Key | `openclaw models auth login --provider newclaw` |
+| 重新配置 Key | `openclaw models auth login --provider newclaw --set-default` |
 | 卸载插件 | `openclaw plugins uninstall openclaw-newclaw-auth` |
 | 更新 OpenClaw | `npm install -g openclaw@latest` |

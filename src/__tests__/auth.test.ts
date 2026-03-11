@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildAuthResult } from "../auth.js";
+import { buildAuthResult, findExistingApiKey, maskKey } from "../auth.js";
 
 const ANTHROPIC_MODEL = {
   id: "claude-3-opus",
@@ -119,5 +119,90 @@ describe("buildAuthResult", () => {
     for (const note of result.notes!) {
       expect(typeof note).toBe("string");
     }
+  });
+
+  it("configPatch includes auth.order for all registered providers", () => {
+    const result = buildAuthResult(
+      "sk-universal",
+      { anthropic: "sk-ant" },
+      [ANTHROPIC_MODEL, OPENAI_MODEL]
+    );
+    const authOrder = result.configPatch!.auth!.order!;
+    expect(authOrder["newclaw"]).toEqual(["newclaw:default"]);
+    expect(authOrder["newclaw-anthropic"]).toEqual(["newclaw:default"]);
+  });
+
+  it("configPatch includes agents.defaults.model when defaultModel exists", () => {
+    const result = buildAuthResult("sk-universal", {}, [ANTHROPIC_MODEL]);
+    const agentsDefaults = result.configPatch!.agents!.defaults!;
+    expect(agentsDefaults.model).toEqual({ primary: "newclaw/claude-3-opus" });
+  });
+
+  it("configPatch includes agents.defaults.models with all model refs", () => {
+    const result = buildAuthResult("sk-universal", {}, [ANTHROPIC_MODEL, OPENAI_MODEL]);
+    const modelsConfig = result.configPatch!.agents!.defaults!.models!;
+    expect(modelsConfig["newclaw/claude-3-opus"]).toEqual({});
+    expect(modelsConfig["newclaw/gpt-4o"]).toEqual({});
+  });
+
+  it("configPatch agents.defaults.models includes vendor sub-provider models", () => {
+    const result = buildAuthResult(
+      "sk-universal",
+      { anthropic: "sk-ant" },
+      [ANTHROPIC_MODEL, OPENAI_MODEL]
+    );
+    const modelsConfig = result.configPatch!.agents!.defaults!.models!;
+    expect(modelsConfig["newclaw-anthropic/claude-3-opus"]).toEqual({});
+    expect(modelsConfig["newclaw/claude-3-opus"]).toEqual({});
+    expect(modelsConfig["newclaw/gpt-4o"]).toEqual({});
+  });
+});
+
+describe("findExistingApiKey", () => {
+  it("returns undefined when config has no models", () => {
+    expect(findExistingApiKey({})).toBeUndefined();
+  });
+
+  it("returns undefined when no providers configured", () => {
+    expect(findExistingApiKey({ models: {} })).toBeUndefined();
+  });
+
+  it("finds key from newclaw provider", () => {
+    const config = {
+      models: {
+        providers: {
+          newclaw: { apiKey: "sk-existing-key-12345" },
+        },
+      },
+    };
+    expect(findExistingApiKey(config)).toBe("sk-existing-key-12345");
+  });
+
+  it("finds key from vendor sub-provider when newclaw has no key", () => {
+    const config = {
+      models: {
+        providers: {
+          "newclaw-anthropic": { apiKey: "sk-vendor-key-12345" },
+        },
+      },
+    };
+    expect(findExistingApiKey(config)).toBe("sk-vendor-key-12345");
+  });
+
+  it("ignores keys shorter than 10 chars", () => {
+    const config = {
+      models: { providers: { newclaw: { apiKey: "short" } } },
+    };
+    expect(findExistingApiKey(config)).toBeUndefined();
+  });
+});
+
+describe("maskKey", () => {
+  it("masks a normal-length key", () => {
+    expect(maskKey("sk-1234567890abcdef")).toBe("sk-123****cdef");
+  });
+
+  it("returns **** for short keys", () => {
+    expect(maskKey("short")).toBe("****");
   });
 });

@@ -67,7 +67,11 @@
 
 安装过程中如果 OpenClaw 弹出安全警告（提示插件存在"环境变量访问+网络发送"），这是正常的——插件需要读取 API Key 并发送到 newclaw.ai，选择「允许」即可。
 
-安装完成后运行 `openclaw plugins list` 确认列表中有 `openclaw-newclaw-auth`。
+安装完成后启用插件：`openclaw plugins enable openclaw-newclaw-auth`
+
+如果 gateway 正在运行，需要重启：先运行 `openclaw gateway stop`，再运行 `openclaw gateway run`。
+
+最后运行 `openclaw plugins list` 确认列表中有 `openclaw-newclaw-auth` 且状态为已启用。
 
 ## 步骤 5：配置 NewClaw API Key
 
@@ -75,10 +79,15 @@
 
 拿到 Key 后，需要把 Key 写入 OpenClaw 配置。方法是直接写入配置文件：
 
-读取 ~/.openclaw/openclaw.json（如果不存在就创建），在 models.providers 下添加 newclaw 配置：
+读取 ~/.openclaw/openclaw.json（如果不存在就创建），在 models.providers 下添加 newclaw 配置，同时添加 auth.order 让 OpenClaw 知道用哪个认证配置：
 
 ```json
 {
+  "auth": {
+    "order": {
+      "newclaw": ["newclaw:default"]
+    }
+  },
   "models": {
     "providers": {
       "newclaw": {
