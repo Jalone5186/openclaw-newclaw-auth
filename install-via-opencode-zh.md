@@ -70,6 +70,8 @@
 
 然后安装：`openclaw plugins install openclaw-newclaw-auth`
 
+如果安装时报 `plugin already exists` 错误，说明没删干净，重新执行上面的删除命令后再装。更新插件到最新版本也是同样的操作（先删后装），API Key 配置不会丢失。
+
 安装过程中如果 OpenClaw 弹出安全警告（提示插件存在"环境变量访问+网络发送"），这是正常的——插件需要读取 API Key 并发送到 newclaw.ai，选择「允许」即可。
 
 安装完成后启用插件：`openclaw plugins enable openclaw-newclaw-auth`

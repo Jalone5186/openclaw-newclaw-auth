@@ -215,6 +215,18 @@ openclaw plugins install openclaw-newclaw-auth
 
 等待安装完成，终端会提示安装成功。
 
+> ⚠️ 如果提示 `plugin already exists`，说明之前已经安装过了，需要先删除旧版本再重装：
+> ```bash
+> # macOS/Linux
+> rm -rf ~/.openclaw/extensions/openclaw-newclaw-auth
+> openclaw plugins install openclaw-newclaw-auth
+>
+> # Windows PowerShell
+> Remove-Item -Recurse -Force "$env:USERPROFILE\.openclaw\extensions\openclaw-newclaw-auth"
+> openclaw plugins install openclaw-newclaw-auth
+> ```
+> 💡 更新插件到最新版本也是同样的操作（先删后装）。你的 API Key 配置不会丢失，它保存在 `~/.openclaw/openclaw.json` 中，和插件文件是分开的。
+
 然后启用插件：
 
 ```bash
