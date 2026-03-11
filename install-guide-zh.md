@@ -417,6 +417,45 @@ openclaw gateway run
 openclaw models auth login --provider newclaw --set-default
 ```
 
+### Q: 安装插件时提示 `plugin already exists`？
+
+这说明插件之前已经安装过了，OpenClaw 不支持覆盖安装。需要先删除旧版本再重新安装：
+
+```bash
+# macOS/Linux
+rm -rf ~/.openclaw/extensions/openclaw-newclaw-auth
+openclaw plugins install openclaw-newclaw-auth
+
+# Windows PowerShell
+Remove-Item -Recurse -Force "$env:USERPROFILE\.openclaw\extensions\openclaw-newclaw-auth"
+openclaw plugins install openclaw-newclaw-auth
+```
+
+### Q: 怎么更新插件到最新版本？
+
+OpenClaw 没有 `plugins update` 命令，更新插件的方法和上面一样 —— 先删后装：
+
+```bash
+# macOS/Linux
+rm -rf ~/.openclaw/extensions/openclaw-newclaw-auth
+openclaw plugins install openclaw-newclaw-auth
+openclaw plugins enable openclaw-newclaw-auth
+
+# Windows PowerShell
+Remove-Item -Recurse -Force "$env:USERPROFILE\.openclaw\extensions\openclaw-newclaw-auth"
+openclaw plugins install openclaw-newclaw-auth
+openclaw plugins enable openclaw-newclaw-auth
+```
+
+如果 gateway 正在运行，更新后需要重启：
+
+```bash
+openclaw gateway stop
+openclaw gateway run
+```
+
+> 💡 你的 API Key 配置不会丢失，它保存在 `~/.openclaw/openclaw.json` 中，和插件文件是分开的。
+
 ### Q: 想卸载插件？
 
 ```bash
@@ -435,6 +474,7 @@ openclaw plugins uninstall openclaw-newclaw-auth
 | 配置 API Key | `openclaw models auth login --provider newclaw --set-default` |
 | 初始化引导（首次安装） | `openclaw onboard --install-daemon` |
 | 重启 gateway | `openclaw gateway stop && openclaw gateway run` |
+| 更新插件 | `rm -rf ~/.openclaw/extensions/openclaw-newclaw-auth && openclaw plugins install openclaw-newclaw-auth` |
 | 检查安装状态 | `openclaw doctor` |
 | 查看已装插件 | `openclaw plugins list` |
 | 查看可用模型 | `openclaw models` |

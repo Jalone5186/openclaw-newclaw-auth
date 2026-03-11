@@ -63,7 +63,12 @@
 
 ## 步骤 4：安装 NewClaw 插件
 
-运行：`openclaw plugins install openclaw-newclaw-auth`
+先检查插件是否已经安装过：运行 `ls ~/.openclaw/extensions/openclaw-newclaw-auth 2>/dev/null && echo "已存在" || echo "未安装"`
+
+- 如果已存在，需要先删除再重装（OpenClaw 不支持覆盖安装）：`rm -rf ~/.openclaw/extensions/openclaw-newclaw-auth`
+- Windows 上用：`Remove-Item -Recurse -Force "$env:USERPROFILE\.openclaw\extensions\openclaw-newclaw-auth"`
+
+然后安装：`openclaw plugins install openclaw-newclaw-auth`
 
 安装过程中如果 OpenClaw 弹出安全警告（提示插件存在"环境变量访问+网络发送"），这是正常的——插件需要读取 API Key 并发送到 newclaw.ai，选择「允许」即可。
 
