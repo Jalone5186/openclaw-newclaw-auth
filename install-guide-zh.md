@@ -316,10 +316,12 @@ openclaw onboard --install-daemon
 1. **选择是否安装守护进程** → 选 Yes
 2. **选择配置方式** → 选 Quick Start
 3. **是否使用已有配置** → 选 Use existing（因为上一步已经配置了 NewClaw）
-4. **选择模型供应商** → 跳过（NewClaw 已通过插件配置好）
+4. **选择模型供应商（Model/auth provider）** → **跳过**。这里不会显示 newclaw，因为你在第三步已经配好了 auth，onboard 只列出还没配置的 provider，这是正常的
 5. **选择默认模型** → 选 `newclaw/` 开头的模型（如 `newclaw/claude-3-opus`）
 6. **后续选项**（聊天渠道、skills 等） → 按需选择或跳过
 
+> 💡 **为什么 onboard 中看不到 newclaw？** 因为你在第三步已经通过 `openclaw models auth login` 完成了 NewClaw 的认证配置。onboard 的 "Model/auth provider" 步骤只显示**还没配置过的** provider，已配好的不会重复出现。这是正常的，不影响使用。
+>
 > 💡 如果你不是第一次安装 OpenClaw（之前已经运行过 onboard），可以跳过这一步。
 
 ---
