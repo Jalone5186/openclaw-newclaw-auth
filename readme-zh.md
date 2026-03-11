@@ -43,6 +43,12 @@ openclaw models auth login --provider newclaw --set-default
 
 配置完成后，所有模型自动注入 OpenClaw 配置，即刻可用。
 
+如果是**首次安装** OpenClaw，请在配置好插件后再运行初始化引导，这样引导中可以选择 NewClaw 的模型作为默认模型：
+
+```bash
+openclaw onboard --install-daemon
+```
+
 ## 厂商专用 Key
 
 | 厂商 | 环境变量 | 说明 |

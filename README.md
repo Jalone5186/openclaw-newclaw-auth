@@ -37,6 +37,12 @@ openclaw models auth login --provider newclaw --set-default
 
 The wizard detects existing API keys and lets you reuse them. It asks for your universal `NEWCLAW_API_KEY` first (required). Then you can optionally add provider-specific keys if you want to route requests to a specific underlying model provider (Claude, Gemini, GPT, etc.). If you skip provider keys, NewClaw routes automatically.
 
+If this is your **first time** using OpenClaw, run the onboard wizard **after** setting up the plugin. This way you can select NewClaw models as your default:
+
+```bash
+openclaw onboard --install-daemon
+```
+
 ## Provider-Specific Keys
 
 | Provider | Env Variable | Description |

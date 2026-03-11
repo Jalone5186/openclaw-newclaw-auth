@@ -58,8 +58,8 @@
   - macOS（zsh）：运行 `echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.zshrc && source ~/.zshrc`
   - Linux（bash）：运行 `echo 'export PATH="$(npm prefix -g)/bin:$PATH"' >> ~/.bashrc && source ~/.bashrc`
   - Windows：重启终端再试。如果仍然找不到，以管理员身份运行 PowerShell 执行：`$npmPath = (npm prefix -g); [Environment]::SetEnvironmentVariable("PATH", "$npmPath;" + [Environment]::GetEnvironmentVariable("PATH", "Machine"), "Machine")`，然后重启终端
-- 安装完成后运行：`openclaw onboard --install-daemon`
 - 确认安装成功：运行 `openclaw --version`，应该输出版本号
+- **重要：先不要运行 `openclaw onboard`！需要先安装插件和配置 API Key**
 
 ## 步骤 4：安装 NewClaw 插件
 
@@ -102,9 +102,22 @@
 
 注意：如果文件已有其他内容，要合并而不是覆盖。写文件时使用原子写入（先写临时文件再 rename）。
 
-## 步骤 6：验证
+## 步骤 6：初始化引导（首次安装）
+
+如果是第一次安装 OpenClaw，运行：`openclaw onboard --install-daemon`
+
+在引导过程中，因为插件已经加载，用户可以选择 NewClaw 提供的模型作为默认模型。引导中的关键选择：
+- 选择配置方式 → 选 Quick Start
+- 是否使用已有配置 → 选 Use existing（上一步已配好 NewClaw）
+- 选择模型供应商 → 跳过（已通过插件配置）
+- 选择默认模型 → 选 newclaw/ 开头的模型
+
+如果之前已经运行过 onboard，可以跳过这一步。
+
+## 步骤 7：验证
 
 运行 `openclaw doctor` 确认没有红色错误。
+运行 `openclaw models` 确认能看到 newclaw/ 开头的模型。
 
 ## 完成
 

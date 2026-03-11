@@ -141,7 +141,7 @@ git --version
 
 ### macOS / Linux
 
-打开终端，依次运行以下两条命令：
+打开终端，运行：
 
 ```bash
 npm install -g openclaw@latest
@@ -149,19 +149,10 @@ npm install -g openclaw@latest
 
 > ⚠️ 安装过程中可能出现 `node-llama-cpp` 相关的红色报错（如 `cmake` 找不到、编译失败），**这是正常的，不影响安装**。`node-llama-cpp` 是可选的本地 AI 嵌入组件，编译失败只会产生警告，不会中断 OpenClaw 的安装。AI 聊天、模型调用、插件等核心功能完全不受影响。
 
-安装完成后，运行新手引导和后台守护进程：
-
-```bash
-openclaw onboard --install-daemon
-```
-
-按照引导提示操作即可（一般一路回车）。
-
 > ⚠️ 如果安装过程中提示 `sharp` 相关错误，改用这条命令安装：
 > ```bash
 > SHARP_IGNORE_GLOBAL_LIBVIPS=1 npm install -g openclaw@latest
 > ```
-> 然后再运行 `openclaw onboard --install-daemon`。
 
 > ⚠️ 如果安装完成后运行 `openclaw` 提示「命令未找到」，执行以下命令修复：
 >
@@ -179,21 +170,13 @@ openclaw onboard --install-daemon
 
 ### Windows
 
-以**管理员身份**打开 PowerShell，运行以下命令：
+以**管理员身份**打开 PowerShell，运行：
 
 ```powershell
 npm install -g openclaw@latest
 ```
 
 > ⚠️ 安装过程中可能出现 `node-llama-cpp` 相关的红色报错（如 `cmake` 找不到、编译失败），**这是正常的，不影响安装**。`node-llama-cpp` 是可选的本地 AI 嵌入组件，编译失败只会产生警告，不会中断安装。AI 聊天、模型调用、插件等核心功能完全不受影响。
-
-安装完成后，运行新手引导和后台守护进程：
-
-```powershell
-openclaw onboard --install-daemon
-```
-
-按照引导提示操作即可。
 
 > ⚠️ 如果 PowerShell 提示执行策略错误，先运行：
 > ```powershell
@@ -212,13 +195,13 @@ openclaw onboard --install-daemon
 
 ### 验证安装成功
 
-安装完成后，运行：
-
 ```bash
-openclaw doctor
+openclaw --version
 ```
 
-如果输出中没有红色错误，说明安装成功。你也可以运行 `openclaw status` 检查服务状态。
+如果输出版本号，说明安装成功。
+
+> ⚠️ **先不要运行 `openclaw onboard`**！需要先安装插件和配置 API Key，这样初始化引导时才能选到 NewClaw 的模型。
 
 ---
 
@@ -303,9 +286,30 @@ openclaw models auth login --provider newclaw --set-default
 
 ---
 
-## 第四步：验证一切正常
+## 第四步：初始化配置（首次安装必须）
 
-### 4.1 检查插件状态
+现在插件和 API Key 都已就绪，运行 OpenClaw 的初始化引导。**因为插件已经加载，引导过程中你可以直接选择 NewClaw 提供的模型：**
+
+```bash
+openclaw onboard --install-daemon
+```
+
+引导流程中的关键选择：
+
+1. **选择是否安装守护进程** → 选 Yes
+2. **选择配置方式** → 选 Quick Start
+3. **是否使用已有配置** → 选 Use existing（因为上一步已经配置了 NewClaw）
+4. **选择模型供应商** → 跳过（NewClaw 已通过插件配置好）
+5. **选择默认模型** → 选 `newclaw/` 开头的模型（如 `newclaw/claude-3-opus`）
+6. **后续选项**（聊天渠道、skills 等） → 按需选择或跳过
+
+> 💡 如果你不是第一次安装 OpenClaw（之前已经运行过 onboard），可以跳过这一步。
+
+---
+
+## 第五步：验证一切正常
+
+### 5.1 检查插件状态
 
 ```bash
 openclaw plugins list
@@ -313,7 +317,7 @@ openclaw plugins list
 
 在输出列表中应该能看到 `openclaw-newclaw-auth`。
 
-### 4.2 检查模型是否可用
+### 5.2 检查模型是否可用
 
 ```bash
 openclaw models
@@ -321,7 +325,7 @@ openclaw models
 
 应该能看到通过 NewClaw 加载的模型列表（如 `newclaw/claude-3.5-sonnet`、`newclaw/gpt-4o` 等）。
 
-### 4.3 打开仪表板（可选）
+### 5.3 打开仪表板（可选）
 
 ```bash
 openclaw dashboard
@@ -426,11 +430,11 @@ openclaw plugins uninstall openclaw-newclaw-auth
 | 操作 | 命令 |
 |---|---|
 | 安装 OpenClaw（全平台） | `npm install -g openclaw@latest` |
-| 运行新手引导 | `openclaw onboard --install-daemon` |
 | 安装 NewClaw 插件 | `openclaw plugins install openclaw-newclaw-auth` |
 | 启用插件 | `openclaw plugins enable openclaw-newclaw-auth` |
-| 重启 gateway | `openclaw gateway stop && openclaw gateway run` |
 | 配置 API Key | `openclaw models auth login --provider newclaw --set-default` |
+| 初始化引导（首次安装） | `openclaw onboard --install-daemon` |
+| 重启 gateway | `openclaw gateway stop && openclaw gateway run` |
 | 检查安装状态 | `openclaw doctor` |
 | 查看已装插件 | `openclaw plugins list` |
 | 查看可用模型 | `openclaw models` |
