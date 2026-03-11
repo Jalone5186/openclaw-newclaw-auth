@@ -238,6 +238,11 @@ openclaw plugins enable openclaw-newclaw-auth
 > openclaw gateway stop
 > openclaw gateway run
 > ```
+> 如果运行 `openclaw gateway run` 时提示 `Gateway start blocked: set gateway.mode=local`，先设置 gateway 模式：
+> ```bash
+> openclaw config set gateway.mode local
+> openclaw gateway run
+> ```
 
 > ⚠️ **关于安全警告**：安装时 OpenClaw 可能会弹出安全提示，提示该插件存在"环境变量访问+网络发送"代码模式。**这是正常的**——NewClaw 插件需要读取你的 API Key（环境变量）并发送到 `newclaw.ai` 进行认证和模型调用，属于插件的正常行为。选择「允许」即可。
 

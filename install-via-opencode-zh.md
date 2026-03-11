@@ -76,7 +76,7 @@
 
 安装完成后启用插件：`openclaw plugins enable openclaw-newclaw-auth`
 
-如果 gateway 正在运行，需要重启：先运行 `openclaw gateway stop`，再运行 `openclaw gateway run`。
+如果 gateway 正在运行，需要重启：先运行 `openclaw gateway stop`，再运行 `openclaw gateway run`。如果 `openclaw gateway run` 提示 `Gateway start blocked: set gateway.mode=local`，先运行 `openclaw config set gateway.mode local`，再运行 `openclaw gateway run`。
 
 最后运行 `openclaw plugins list` 确认列表中有 `openclaw-newclaw-auth` 且状态为已启用。
 
